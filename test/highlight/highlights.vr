@@ -1,0 +1,207 @@
+// Highlight test for queries/highlights.scm.
+// <- comment
+
+mod shop;
+// <- keyword
+//  ^ module
+//      ^ punctuation.delimiter
+pub use super::shop as store;
+// <- keyword
+//  ^ keyword
+//      ^ keyword
+//           ^ punctuation.delimiter
+//                  ^ keyword
+use crate::shop::Cart;
+//  ^ keyword
+//         ^ module
+//               ^ type
+
+struct Builtins {
+// <- keyword
+//     ^ type
+//              ^ punctuation.bracket
+    a: bool,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    b: i8,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    c: i16,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    d: i32,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    e: i64,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    f: u8,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    g: u16,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    h: u32,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    i: u64,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    j: usize,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    k: f32,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    l: f64,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    m: string,
+//  ^ property
+//   ^ punctuation.delimiter
+//     ^ type.builtin
+    n: Option<Uuid>,
+//     ^ type.builtin
+//           ^ punctuation.bracket
+//            ^ type.builtin
+//                ^ punctuation.bracket
+//                 ^ punctuation.delimiter
+    o: Result<Time, Error>,
+//     ^ type.builtin
+//            ^ type.builtin
+//                  ^ type.builtin
+    p: Vec<Bytes>,
+//     ^ type.builtin
+//         ^ type.builtin
+    q: HashMap<string, Shared<Task<i32>>>,
+//     ^ type.builtin
+//                     ^ type.builtin
+//                            ^ type.builtin
+}
+// <- punctuation.bracket
+
+pub struct Config {
+//         ^ type
+    #[rename("PORT")]
+//   ^ punctuation.bracket
+//    ^ attribute
+//           ^ string
+    pub port: i64,
+//  ^ keyword
+//      ^ property
+    owner: shop::User,
+//         ^ module
+//               ^ type
+}
+
+enum Shape {
+// <- keyword
+//   ^ type
+    Circle(f64),
+//  ^ constructor
+    Rect { w: i32, h: i32 },
+//  ^ constructor
+//         ^ property
+}
+
+impl Config {
+// <- keyword
+//   ^ type
+    pub async fn size(mut self, by: i64) -> i64 {
+//      ^ keyword
+//            ^ keyword
+//               ^ function.method
+//                   ^ punctuation.bracket
+//                    ^ keyword
+//                        ^ variable.builtin
+//                              ^ variable.parameter
+//                                       ^ operator
+        let mut total = by + 1;
+//      ^ keyword
+//          ^ keyword
+//              ^ variable
+//                    ^ operator
+//                      ^ variable
+//                         ^ operator
+//                           ^ number
+        while total < self.port { total = total * 2; }
+//      ^ keyword
+//                  ^ operator
+//                    ^ variable.builtin
+//                        ^ punctuation.delimiter
+//                         ^ property
+//                                              ^ operator
+        total
+//      ^ variable
+    }
+}
+
+#[test]
+  // <- attribute
+fn main() {
+// ^ function
+    let shape = Shape::Circle(2.5);
+//              ^ type
+//                     ^ constructor
+//                            ^ number
+    let found = Some(1_000);
+//              ^ constructor
+//                   ^ number
+    let text = format!("a\tb {}", found);
+//             ^ function.macro
+//                   ^ function.macro
+//                     ^ string
+//                       ^ string.escape
+//                                ^ variable
+    let ok = !true && false || 3 as i32 >= 3;
+//           ^ operator
+//            ^ boolean
+//                 ^ operator
+//                    ^ boolean
+//                          ^ operator
+//                               ^ keyword
+//                                  ^ type.builtin
+//                                      ^ operator
+    let twice = |x| x * 2;
+//              ^ punctuation.bracket
+//               ^ variable.parameter
+//                  ^ variable
+    match shape {
+//  ^ keyword
+//        ^ variable
+        Shape::Circle(r) => println!("{}", r),
+//      ^ type
+//             ^ constructor
+//                    ^ variable
+//                       ^ operator
+//                          ^ function.macro
+        Shape::Rect { w, h: 0 } => {}
+//             ^ constructor
+//                    ^ property
+//                       ^ property
+        None => {}
+//      ^ constructor
+        _ => {}
+    }
+    let cart = self::shop::new_cart();
+//             ^ variable.builtin
+//                   ^ module
+//                         ^ function
+    cart.total(1).await?;
+//  ^ variable
+//       ^ function.method
+//                ^ keyword
+//                     ^ operator
+}

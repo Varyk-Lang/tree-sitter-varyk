@@ -1,0 +1,273 @@
+================================================================================
+Wildcard and name patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        _ => 0,
+        n => n,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              value: (integer_literal))
+            (match_arm
+              pattern: (identifier)
+              value: (identifier))))))))
+
+================================================================================
+Literal patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        1 => a,
+        -1 => b,
+        2.5 => c,
+        -2.5 => d,
+        "yes" => e,
+        true => f,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (integer_literal)
+              value: (identifier))
+            (match_arm
+              pattern: (negative_literal
+                (integer_literal))
+              value: (identifier))
+            (match_arm
+              pattern: (float_literal)
+              value: (identifier))
+            (match_arm
+              pattern: (negative_literal
+                (float_literal))
+              value: (identifier))
+            (match_arm
+              pattern: (string_literal
+                (string_content))
+              value: (identifier))
+            (match_arm
+              pattern: (boolean_literal)
+              value: (identifier))))))))
+
+================================================================================
+Range patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        0..=9 => a,
+        -5..=-1 => b,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (range_pattern
+                left: (integer_literal)
+                right: (integer_literal))
+              value: (identifier))
+            (match_arm
+              pattern: (range_pattern
+                left: (negative_literal
+                  (integer_literal))
+                right: (negative_literal
+                  (integer_literal)))
+              value: (identifier))))))))
+
+================================================================================
+Variant patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        None => a,
+        Some(p) => p,
+        Ok(v) => v,
+        Err(e) => e,
+        Shape::Circle(r, _) => r,
+        geo::Shape::Point => b,
+        crate::m::E::V(x) => x,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (identifier)
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (identifier)
+                (identifier))
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (identifier)
+                (identifier))
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (identifier)
+                (identifier))
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (scoped_identifier
+                  path: (identifier)
+                  name: (identifier))
+                (identifier))
+              value: (identifier))
+            (match_arm
+              pattern: (scoped_identifier
+                path: (scoped_identifier
+                  path: (identifier)
+                  name: (identifier))
+                name: (identifier))
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (scoped_identifier
+                  path: (scoped_identifier
+                    path: (scoped_identifier
+                      path: (crate)
+                      name: (identifier))
+                    name: (identifier))
+                  name: (identifier))
+                (identifier))
+              value: (identifier))))))))
+
+================================================================================
+Struct patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        Event::Click { x, y: 0, } => x,
+        Point { x: _, y } => y,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (struct_pattern
+                type: (scoped_type_identifier
+                  path: (identifier)
+                  name: (type_identifier))
+                (field_pattern
+                  name: (shorthand_field_identifier))
+                (field_pattern
+                  name: (field_identifier)
+                  pattern: (integer_literal)))
+              value: (identifier))
+            (match_arm
+              pattern: (struct_pattern
+                type: (type_identifier)
+                (field_pattern
+                  name: (field_identifier))
+                (field_pattern
+                  name: (shorthand_field_identifier)))
+              value: (identifier))))))))
+
+================================================================================
+Nested patterns
+================================================================================
+
+fn main() {
+    let r = match x {
+        Some(Shape::Circle(r)) => r,
+        Ok(Event::Key { code: -1 }) => a,
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (identifier)
+                (tuple_struct_pattern
+                  type: (scoped_identifier
+                    path: (identifier)
+                    name: (identifier))
+                  (identifier)))
+              value: (identifier))
+            (match_arm
+              pattern: (tuple_struct_pattern
+                type: (identifier)
+                (struct_pattern
+                  type: (scoped_type_identifier
+                    path: (identifier)
+                    name: (type_identifier))
+                  (field_pattern
+                    name: (field_identifier)
+                    pattern: (negative_literal
+                      (integer_literal)))))
+              value: (identifier))))))))

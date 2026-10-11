@@ -1,0 +1,979 @@
+================================================================================
+Integer literals
+================================================================================
+
+fn main() {
+    let a = 0;
+    let b = 1_000;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (integer_literal))
+      (let_declaration
+        pattern: (identifier)
+        value: (integer_literal)))))
+
+================================================================================
+Float literals
+================================================================================
+
+fn main() {
+    let a = 2.5;
+    let b = 1_000.5;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (float_literal))
+      (let_declaration
+        pattern: (identifier)
+        value: (float_literal)))))
+
+================================================================================
+String escapes
+================================================================================
+
+fn main() {
+    let s = "a\nb\tc\\d\"e\0";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (string_literal
+          (string_content)
+          (escape_sequence)
+          (string_content)
+          (escape_sequence)
+          (string_content)
+          (escape_sequence)
+          (string_content)
+          (escape_sequence)
+          (string_content)
+          (escape_sequence))))))
+
+================================================================================
+Empty string
+================================================================================
+
+fn main() {
+    let s = "";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (string_literal)))))
+
+================================================================================
+String spanning a newline
+================================================================================
+
+fn main() {
+    let s = "one
+two";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (string_literal
+          (string_content))))))
+
+================================================================================
+Booleans
+================================================================================
+
+fn main() {
+    let a = true;
+    let b = false;
+    true;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (boolean_literal))
+      (let_declaration
+        pattern: (identifier)
+        value: (boolean_literal))
+      (expression_statement
+        (boolean_literal)))))
+
+================================================================================
+Names and paths
+================================================================================
+
+fn main() {
+    a;
+    a::b::c;
+    crate::shop::total;
+    self::helper;
+    super::C;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (identifier))
+      (expression_statement
+        (scoped_identifier
+          path: (scoped_identifier
+            path: (identifier)
+            name: (identifier))
+          name: (identifier)))
+      (expression_statement
+        (scoped_identifier
+          path: (scoped_identifier
+            path: (crate)
+            name: (identifier))
+          name: (identifier)))
+      (expression_statement
+        (scoped_identifier
+          path: (self)
+          name: (identifier)))
+      (expression_statement
+        (scoped_identifier
+          path: (super)
+          name: (identifier))))))
+
+================================================================================
+Self and its fields
+================================================================================
+
+fn main() {
+    self;
+    self.count;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (self))
+      (expression_statement
+        (field_expression
+          value: (self)
+          field: (field_identifier))))))
+
+================================================================================
+Calls
+================================================================================
+
+fn main() {
+    f();
+    f(1);
+    f(1, 2,);
+    Counter::new();
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments)))
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (integer_literal))))
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (integer_literal)
+            (integer_literal))))
+      (expression_statement
+        (call_expression
+          function: (scoped_identifier
+            path: (identifier)
+            name: (identifier))
+          arguments: (arguments))))))
+
+================================================================================
+Method calls, fields, and indexing
+================================================================================
+
+fn main() {
+    c.add(2);
+    user.name;
+    v[i];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (field_expression
+            value: (identifier)
+            field: (field_identifier))
+          arguments: (arguments
+            (integer_literal))))
+      (expression_statement
+        (field_expression
+          value: (identifier)
+          field: (field_identifier)))
+      (expression_statement
+        (index_expression
+          (identifier)
+          (identifier))))))
+
+================================================================================
+Await and try
+================================================================================
+
+fn main() {
+    fetch(1).await;
+    parse(s)?;
+    a.b().c?.await;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (await_expression
+          (call_expression
+            function: (identifier)
+            arguments: (arguments
+              (integer_literal)))))
+      (expression_statement
+        (try_expression
+          (call_expression
+            function: (identifier)
+            arguments: (arguments
+              (identifier)))))
+      (expression_statement
+        (await_expression
+          (try_expression
+            (field_expression
+              value: (call_expression
+                function: (field_expression
+                  value: (identifier)
+                  field: (field_identifier))
+                arguments: (arguments))
+              field: (field_identifier))))))))
+
+================================================================================
+Casts
+================================================================================
+
+fn main() {
+    x as i64;
+    -x as i64 * 2;
+    x as i32 < n;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (type_cast_expression
+          value: (identifier)
+          type: (type_identifier)))
+      (expression_statement
+        (binary_expression
+          left: (type_cast_expression
+            value: (unary_expression
+              (identifier))
+            type: (type_identifier))
+          right: (integer_literal)))
+      (expression_statement
+        (binary_expression
+          left: (type_cast_expression
+            value: (identifier)
+            type: (type_identifier))
+          right: (identifier))))))
+
+================================================================================
+Unary operators
+================================================================================
+
+fn main() {
+    !ok;
+    -x;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (unary_expression
+          (identifier)))
+      (expression_statement
+        (unary_expression
+          (identifier))))))
+
+================================================================================
+Binary operators
+================================================================================
+
+fn main() {
+    a || b;
+    a && b;
+    a == b;
+    a != b;
+    a < b;
+    a <= b;
+    a > b;
+    a >= b;
+    a + b;
+    a - b;
+    a * b;
+    a / b;
+    a % b;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Operator precedence
+================================================================================
+
+fn main() {
+    a + b * c;
+    a || b && c;
+    a == b + 1;
+    10 - 3 - 2;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (binary_expression
+            left: (identifier)
+            right: (integer_literal))))
+      (expression_statement
+        (binary_expression
+          left: (binary_expression
+            left: (integer_literal)
+            right: (integer_literal))
+          right: (integer_literal))))))
+
+================================================================================
+Parentheses
+================================================================================
+
+fn main() {
+    (a + b) * c;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (binary_expression
+          left: (parenthesized_expression
+            (binary_expression
+              left: (identifier)
+              right: (identifier)))
+          right: (identifier))))))
+
+================================================================================
+Struct values
+================================================================================
+
+fn main() {
+    let u = User { name: "a", age: 3, };
+    let v = m::User { name: "b" };
+    let w = Empty {};
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (struct_expression
+          name: (type_identifier)
+          body: (field_initializer_list
+            (field_initializer
+              field: (field_identifier)
+              value: (string_literal
+                (string_content)))
+            (field_initializer
+              field: (field_identifier)
+              value: (integer_literal)))))
+      (let_declaration
+        pattern: (identifier)
+        value: (struct_expression
+          name: (scoped_type_identifier
+            path: (identifier)
+            name: (type_identifier))
+          body: (field_initializer_list
+            (field_initializer
+              field: (field_identifier)
+              value: (string_literal
+                (string_content))))))
+      (let_declaration
+        pattern: (identifier)
+        value: (struct_expression
+          name: (type_identifier)
+          body: (field_initializer_list))))))
+
+================================================================================
+Block value
+================================================================================
+
+fn main() {
+    let v = { f(); 1 };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (block
+          (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments)))
+          (integer_literal))))))
+
+================================================================================
+If, else if, and else
+================================================================================
+
+fn main() {
+    if a { f(); }
+    let y = if a { 1 } else if b { 2 } else { 3 };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (if_expression
+          condition: (identifier)
+          consequence: (block
+            (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (arguments))))))
+      (let_declaration
+        pattern: (identifier)
+        value: (if_expression
+          condition: (identifier)
+          consequence: (block
+            (integer_literal))
+          alternative: (else_clause
+            (if_expression
+              condition: (identifier)
+              consequence: (block
+                (integer_literal))
+              alternative: (else_clause
+                (block
+                  (integer_literal))))))))))
+
+================================================================================
+If conditions are not struct values
+================================================================================
+
+fn main() {
+    let x = if a == b {};
+    let y = if m::A {};
+    let z = if (P { x: 1 }).x == 1 {};
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (if_expression
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          consequence: (block)))
+      (let_declaration
+        pattern: (identifier)
+        value: (if_expression
+          condition: (scoped_identifier
+            path: (identifier)
+            name: (identifier))
+          consequence: (block)))
+      (let_declaration
+        pattern: (identifier)
+        value: (if_expression
+          condition: (binary_expression
+            left: (field_expression
+              value: (parenthesized_expression
+                (struct_expression
+                  name: (type_identifier)
+                  body: (field_initializer_list
+                    (field_initializer
+                      field: (field_identifier)
+                      value: (integer_literal)))))
+              field: (field_identifier))
+            right: (integer_literal))
+          consequence: (block))))))
+
+================================================================================
+Closures
+================================================================================
+
+fn main() {
+    let a = |x| x * 2;
+    let b = |a, b| a + b;
+    let c = || 1;
+    let d = |x| { f(x); x };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (closure_expression
+          parameters: (closure_parameters
+            (identifier))
+          body: (binary_expression
+            left: (identifier)
+            right: (integer_literal))))
+      (let_declaration
+        pattern: (identifier)
+        value: (closure_expression
+          parameters: (closure_parameters
+            (identifier)
+            (identifier))
+          body: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      (let_declaration
+        pattern: (identifier)
+        value: (closure_expression
+          parameters: (closure_parameters)
+          body: (integer_literal)))
+      (let_declaration
+        pattern: (identifier)
+        value: (closure_expression
+          parameters: (closure_parameters
+            (identifier))
+          body: (block
+            (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
+                  (identifier))))
+            (identifier)))))))
+
+================================================================================
+Intrinsic macros
+================================================================================
+
+fn main() {
+    println!("{} {}", a, b);
+    format!("x");
+    vec![];
+    vec![1, 2,];
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (macro_invocation
+          macro: (identifier)
+          (arguments
+            (string_literal
+              (string_content))
+            (identifier)
+            (identifier))))
+      (expression_statement
+        (macro_invocation
+          macro: (identifier)
+          (arguments
+            (string_literal
+              (string_content)))))
+      (expression_statement
+        (macro_invocation
+          macro: (identifier)
+          (array_expression)))
+      (expression_statement
+        (macro_invocation
+          macro: (identifier)
+          (array_expression
+            (integer_literal)
+            (integer_literal)))))))
+
+================================================================================
+Match arms and commas
+================================================================================
+
+fn main() {
+    let a = match x {
+        1 => "one",
+        _ => "other",
+    };
+    let b = match x {
+        1 => "one",
+        _ => "other"
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (integer_literal)
+              value: (string_literal
+                (string_content)))
+            (match_arm
+              value: (string_literal
+                (string_content))))))
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (integer_literal)
+              value: (string_literal
+                (string_content)))
+            (match_arm
+              value: (string_literal
+                (string_content)))))))))
+
+================================================================================
+Match arms with block bodies
+================================================================================
+
+fn main() {
+    let a = match x {
+        1 => { f(); }
+        _ => { g(); }
+    };
+    let b = match x {
+        0 => {}
+        -1 => {},
+        _ => {}
+    };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (integer_literal)
+              value: (block
+                (expression_statement
+                  (call_expression
+                    function: (identifier)
+                    arguments: (arguments)))))
+            (match_arm
+              value: (block
+                (expression_statement
+                  (call_expression
+                    function: (identifier)
+                    arguments: (arguments))))))))
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              pattern: (integer_literal)
+              value: (block))
+            (match_arm
+              pattern: (negative_literal
+                (integer_literal))
+              value: (block))
+            (match_arm
+              value: (block))))))))
+
+================================================================================
+Empty match
+================================================================================
+
+fn main() {
+    let a = match x {};
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block))))))
+
+================================================================================
+Match values are not struct values
+================================================================================
+
+fn main() {
+    let a = match x { _ => 1 };
+    let b = match m::A { _ => 1 };
+    let c = match a == b { _ => 1 };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              value: (integer_literal)))))
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (scoped_identifier
+            path: (identifier)
+            name: (identifier))
+          body: (match_block
+            (match_arm
+              value: (integer_literal)))))
+      (let_declaration
+        pattern: (identifier)
+        value: (match_expression
+          value: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          body: (match_block
+            (match_arm
+              value: (integer_literal))))))))
+
+================================================================================
+If let
+================================================================================
+
+fn main() {
+    let a = if let Some(x) = v { x } else if let Ok(y) = r { y } else { 0 };
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (if_expression
+          condition: (let_condition
+            pattern: (tuple_struct_pattern
+              type: (identifier)
+              (identifier))
+            value: (identifier))
+          consequence: (block
+            (identifier))
+          alternative: (else_clause
+            (if_expression
+              condition: (let_condition
+                pattern: (tuple_struct_pattern
+                  type: (identifier)
+                  (identifier))
+                value: (identifier))
+              consequence: (block
+                (identifier))
+              alternative: (else_clause
+                (block
+                  (integer_literal))))))))))

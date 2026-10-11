@@ -1,0 +1,35 @@
+{
+  "grammars": [
+    {
+      "name": "varyk",
+      "camelcase": "Varyk",
+      "scope": "source.varyk",
+      "path": ".",
+      "file-types": ["vr"],
+      "highlights": "queries/highlights.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.0",
+    "license": "MIT OR Apache-2.0",
+    "description": "Varyk grammar for Tree-sitter",
+    "authors": [
+      {
+        "name": "Vlad Mickevic"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/Varyk-Lang/tree-sitter-varyk"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "java": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}

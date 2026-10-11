@@ -1,0 +1,33 @@
+name: Drift
+
+# Parses the compiler's own programs with this grammar. Not a required check:
+# a red run, on a pull request too, means the compiler moved on and the
+# grammar is behind, not that the pull request is wrong.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  # The pinned tree-sitter CLI; it moves with ci.yml and the README in one change.
+  TREE_SITTER_CLI: 0.27.1
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the tree-sitter CLI
+        run: npm install -g "tree-sitter-cli@$TREE_SITTER_CLI"
+
+      - name: Clone the compiler
+        run: git clone --depth 1 https://github.com/Varyk-Lang/varyk "$RUNNER_TEMP/varyk"
+
+      - name: Parse its programs
+        run: scripts/drift.sh "$RUNNER_TEMP/varyk"

@@ -1,0 +1,168 @@
+================================================================================
+Primitive and user types
+================================================================================
+
+fn main() {
+    let a: i32 = 0;
+    let b: string = s;
+    let c: User = u;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        type: (type_identifier)
+        value: (integer_literal))
+      (let_declaration
+        pattern: (identifier)
+        type: (type_identifier)
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (type_identifier)
+        value: (identifier)))))
+
+================================================================================
+Module-qualified type
+================================================================================
+
+fn main() {
+    let a: m::User = u;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        type: (scoped_type_identifier
+          path: (identifier)
+          name: (type_identifier))
+        value: (identifier)))))
+
+================================================================================
+Type paths from crate, self, and super
+================================================================================
+
+fn main() {
+    let a: crate::shop::Cart = c;
+    let b: self::a::B = x;
+    let c: super::C = y;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        type: (scoped_type_identifier
+          path: (scoped_identifier
+            path: (crate)
+            name: (identifier))
+          name: (type_identifier))
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (scoped_type_identifier
+          path: (scoped_identifier
+            path: (self)
+            name: (identifier))
+          name: (type_identifier))
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (scoped_type_identifier
+          path: (super)
+          name: (type_identifier))
+        value: (identifier)))))
+
+================================================================================
+Generic types
+================================================================================
+
+fn main() {
+    let a: Vec<i32> = v;
+    let b: HashMap<K, V> = m;
+    let c: Result<T, E,> = r;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (type_identifier)))
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (type_identifier)
+            (type_identifier)))
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (type_identifier)
+            (type_identifier)))
+        value: (identifier)))))
+
+================================================================================
+Nested generic types
+================================================================================
+
+fn main() {
+    let a: Vec<Vec<i32>> = v;
+    let b: Option<m::User> = o;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (generic_type
+              type: (type_identifier)
+              type_arguments: (type_arguments
+                (type_identifier)))))
+        value: (identifier))
+      (let_declaration
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (scoped_type_identifier
+              path: (identifier)
+              name: (type_identifier))))
+        value: (identifier)))))

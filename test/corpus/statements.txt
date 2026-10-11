@@ -1,0 +1,404 @@
+================================================================================
+Let declarations
+================================================================================
+
+fn main() {
+    let x = 5;
+    let y: i64 = 5;
+    let mut c = 0;
+    let _ = f();
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (integer_literal))
+      (let_declaration
+        pattern: (identifier)
+        type: (type_identifier)
+        value: (integer_literal))
+      (let_declaration
+        (mutable_specifier)
+        pattern: (identifier)
+        value: (integer_literal))
+      (let_declaration
+        pattern: (identifier)
+        value: (call_expression
+          function: (identifier)
+          arguments: (arguments))))))
+
+================================================================================
+Assignments
+================================================================================
+
+fn main() {
+    x = 1;
+    user.name = "Bob";
+    scores[0] = 10;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (assignment_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (expression_statement
+        (assignment_expression
+          left: (field_expression
+            value: (identifier)
+            field: (field_identifier))
+          right: (string_literal
+            (string_content))))
+      (expression_statement
+        (assignment_expression
+          left: (index_expression
+            (identifier)
+            (integer_literal))
+          right: (integer_literal))))))
+
+================================================================================
+Return
+================================================================================
+
+fn main() {
+    return;
+    return x;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (return_expression))
+      (expression_statement
+        (return_expression
+          (identifier))))))
+
+================================================================================
+While and while let
+================================================================================
+
+fn main() {
+    while c < 10 {}
+    while let Some(t) = tasks.pop() {}
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (while_expression
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          body: (block)))
+      (expression_statement
+        (while_expression
+          condition: (let_condition
+            pattern: (tuple_struct_pattern
+              type: (identifier)
+              (identifier))
+            value: (call_expression
+              function: (field_expression
+                value: (identifier)
+                field: (field_identifier))
+              arguments: (arguments)))
+          body: (block))))))
+
+================================================================================
+For over ranges
+================================================================================
+
+fn main() {
+    for i in 0..n {}
+    for i in 1..5 {}
+    for i in 0..=n {}
+    for i in a + 1..b * 2 {}
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (range_expression
+            (integer_literal)
+            (identifier))
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (range_expression
+            (integer_literal)
+            (integer_literal))
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (range_expression
+            (integer_literal)
+            (identifier))
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (range_expression
+            (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            (binary_expression
+              left: (identifier)
+              right: (integer_literal)))
+          body: (block))))))
+
+================================================================================
+For over an expression
+================================================================================
+
+fn main() {
+    for item in items {}
+    for x in xs.iter() { f(x); }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (identifier)
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (call_expression
+            function: (field_expression
+              value: (identifier)
+              field: (field_identifier))
+            arguments: (arguments))
+          body: (block
+            (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
+                  (identifier))))))))))
+
+================================================================================
+Loop heads are not struct values
+================================================================================
+
+fn main() {
+    while i < n {}
+    while m::A {}
+    for x in xs {}
+    for i in 0..n {}
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (while_expression
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          body: (block)))
+      (expression_statement
+        (while_expression
+          condition: (scoped_identifier
+            path: (identifier)
+            name: (identifier))
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (identifier)
+          body: (block)))
+      (expression_statement
+        (for_expression
+          pattern: (identifier)
+          value: (range_expression
+            (integer_literal)
+            (identifier))
+          body: (block))))))
+
+================================================================================
+Break and continue
+================================================================================
+
+fn main() {
+    while true {
+        break;
+        continue;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (while_expression
+          condition: (boolean_literal)
+          body: (block
+            (expression_statement
+              (break_expression))
+            (expression_statement
+              (continue_expression))))))))
+
+================================================================================
+Expression statements
+================================================================================
+
+fn main() {
+    f();
+    a + 1;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments)))
+      (expression_statement
+        (binary_expression
+          left: (identifier)
+          right: (integer_literal))))))
+
+================================================================================
+Block-like statements without a semicolon
+================================================================================
+
+fn main() {
+    if a { f(); }
+    match x { _ => 1 }
+    { g(); }
+    h();
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (if_expression
+          condition: (identifier)
+          consequence: (block
+            (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (arguments))))))
+      (expression_statement
+        (match_expression
+          value: (identifier)
+          body: (match_block
+            (match_arm
+              value: (integer_literal)))))
+      (expression_statement
+        (block
+          (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments)))))
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments))))))
+
+================================================================================
+Tail expressions
+================================================================================
+
+fn main() {
+    f();
+    x + 1
+}
+
+fn pick() {
+    if a { 1 } else { 2 }
+}
+
+fn name() {
+    match x { _ => "a" }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments)))
+      (binary_expression
+        left: (identifier)
+        right: (integer_literal))))
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (if_expression
+        condition: (identifier)
+        consequence: (block
+          (integer_literal))
+        alternative: (else_clause
+          (block
+            (integer_literal))))))
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (match_expression
+        value: (identifier)
+        body: (match_block
+          (match_arm
+            value: (string_literal
+              (string_content))))))))

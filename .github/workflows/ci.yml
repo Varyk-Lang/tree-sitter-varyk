@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  # The pinned tree-sitter CLI; it moves with drift.yml and the README in one change.
+  TREE_SITTER_CLI: 0.27.1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the tree-sitter CLI
+        run: npm install -g "tree-sitter-cli@$TREE_SITTER_CLI"
+
+      - name: Generate
+        run: tree-sitter generate --abi 14
+
+      - name: src/ is current
+        run: |
+          if [ -n "$(git status --porcelain -- src)" ]; then
+            echo "::error::src/ differs from what grammar.js generates; run 'tree-sitter generate --abi 14' and commit src/"
+            git status --porcelain -- src
+            exit 1
+          fi
+
+      - name: Test
+        run: tree-sitter test
