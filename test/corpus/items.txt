@@ -1,0 +1,447 @@
+================================================================================
+Function with no parameters
+================================================================================
+
+fn main() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))
+
+================================================================================
+Public function with parameters and a return type
+================================================================================
+
+pub fn add(a: i32, mut b: Vec<i32>,) -> Result<T, E> {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    (visibility_modifier)
+    name: (identifier)
+    parameters: (parameters
+      (parameter
+        pattern: (identifier)
+        type: (type_identifier))
+      (parameter
+        (mutable_specifier)
+        pattern: (identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (type_identifier)))))
+    return_type: (generic_type
+      type: (type_identifier)
+      type_arguments: (type_arguments
+        (type_identifier)
+        (type_identifier)))
+    body: (block)))
+
+================================================================================
+Async functions
+================================================================================
+
+async fn fetch() {}
+
+pub async fn serve() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    (function_modifiers)
+    name: (identifier)
+    parameters: (parameters)
+    body: (block))
+  (function_item
+    (visibility_modifier)
+    (function_modifiers)
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))
+
+================================================================================
+Structs
+================================================================================
+
+struct User {
+    pub name: string,
+    age: i32,
+}
+
+pub struct Point { x: i32 }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_item
+    name: (type_identifier)
+    body: (field_declaration_list
+      (field_declaration
+        (visibility_modifier)
+        name: (field_identifier)
+        type: (type_identifier))
+      (field_declaration
+        name: (field_identifier)
+        type: (type_identifier))))
+  (struct_item
+    (visibility_modifier)
+    name: (type_identifier)
+    body: (field_declaration_list
+      (field_declaration
+        name: (field_identifier)
+        type: (type_identifier)))))
+
+================================================================================
+Enums
+================================================================================
+
+pub enum Color { Red, Green }
+
+enum Shape {
+    Point,
+    Circle(f64),
+    Rect(f64, m::Size,),
+    Labeled { name: string, size: Option<i32>, },
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_item
+    (visibility_modifier)
+    name: (type_identifier)
+    body: (enum_variant_list
+      (enum_variant
+        name: (identifier))
+      (enum_variant
+        name: (identifier))))
+  (enum_item
+    name: (type_identifier)
+    body: (enum_variant_list
+      (enum_variant
+        name: (identifier))
+      (enum_variant
+        name: (identifier)
+        body: (ordered_field_declaration_list
+          type: (type_identifier)))
+      (enum_variant
+        name: (identifier)
+        body: (ordered_field_declaration_list
+          type: (type_identifier)
+          type: (scoped_type_identifier
+            path: (identifier)
+            name: (type_identifier))))
+      (enum_variant
+        name: (identifier)
+        body: (field_declaration_list
+          (field_declaration
+            name: (field_identifier)
+            type: (type_identifier))
+          (field_declaration
+            name: (field_identifier)
+            type: (generic_type
+              type: (type_identifier)
+              type_arguments: (type_arguments
+                (type_identifier)))))))))
+
+================================================================================
+Impl block
+================================================================================
+
+impl Counter {
+    fn new() -> Counter {}
+    pub fn add(mut self, by: i32) {}
+    async fn value(self) -> i32 {}
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (impl_item
+    type: (type_identifier)
+    body: (declaration_list
+      (function_item
+        name: (identifier)
+        parameters: (parameters)
+        return_type: (type_identifier)
+        body: (block))
+      (function_item
+        (visibility_modifier)
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            (mutable_specifier)
+            (self))
+          (parameter
+            pattern: (identifier)
+            type: (type_identifier)))
+        body: (block))
+      (function_item
+        (function_modifiers)
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            (self)))
+        return_type: (type_identifier)
+        body: (block)))))
+
+================================================================================
+Modules
+================================================================================
+
+mod m;
+pub mod n;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (mod_item
+    name: (identifier))
+  (mod_item
+    (visibility_modifier)
+    name: (identifier)))
+
+================================================================================
+Use declarations
+================================================================================
+
+use crate::a::b;
+use self::x;
+use super::y as z;
+pub use m::T;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (use_declaration
+    argument: (scoped_identifier
+      path: (scoped_identifier
+        path: (crate)
+        name: (identifier))
+      name: (identifier)))
+  (use_declaration
+    argument: (scoped_identifier
+      path: (self)
+      name: (identifier)))
+  (use_declaration
+    argument: (use_as_clause
+      path: (scoped_identifier
+        path: (super)
+        name: (identifier))
+      alias: (identifier)))
+  (use_declaration
+    (visibility_modifier)
+    argument: (scoped_identifier
+      path: (identifier)
+      name: (identifier))))
+
+================================================================================
+Attribute before a function
+================================================================================
+
+#[test]
+fn adds() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (attribute_item
+    (attribute
+      (identifier)))
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))
+
+================================================================================
+Stacked attributes before a field
+================================================================================
+
+struct Config {
+    #[rename("PORT")]
+    #[default(-1)]
+    port: i32,
+    #[skip]
+    cache: Option<string>,
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_item
+    name: (type_identifier)
+    body: (field_declaration_list
+      (attribute_item
+        (attribute
+          (identifier)
+          arguments: (token_tree
+            (string_literal
+              (string_content)))))
+      (attribute_item
+        (attribute
+          (identifier)
+          arguments: (token_tree
+            (integer_literal))))
+      (field_declaration
+        name: (field_identifier)
+        type: (type_identifier))
+      (attribute_item
+        (attribute
+          (identifier)))
+      (field_declaration
+        name: (field_identifier)
+        type: (generic_type
+          type: (type_identifier)
+          type_arguments: (type_arguments
+            (type_identifier)))))))
+
+================================================================================
+Attributes before a variant, a variant field, a method, a mod, a use, and an impl
+================================================================================
+
+enum Status {
+    #[rename("on")]
+    On,
+    Off { #[skip] at: i64 },
+}
+
+#[allow]
+mod m;
+
+#[allow]
+use m::T;
+
+#[allow]
+impl Status {
+    #[test]
+    fn check(self) {}
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_item
+    name: (type_identifier)
+    body: (enum_variant_list
+      (attribute_item
+        (attribute
+          (identifier)
+          arguments: (token_tree
+            (string_literal
+              (string_content)))))
+      (enum_variant
+        name: (identifier))
+      (enum_variant
+        name: (identifier)
+        body: (field_declaration_list
+          (attribute_item
+            (attribute
+              (identifier)))
+          (field_declaration
+            name: (field_identifier)
+            type: (type_identifier))))))
+  (attribute_item
+    (attribute
+      (identifier)))
+  (mod_item
+    name: (identifier))
+  (attribute_item
+    (attribute
+      (identifier)))
+  (use_declaration
+    argument: (scoped_identifier
+      path: (identifier)
+      name: (identifier)))
+  (attribute_item
+    (attribute
+      (identifier)))
+  (impl_item
+    type: (type_identifier)
+    body: (declaration_list
+      (attribute_item
+        (attribute
+          (identifier)))
+      (function_item
+        name: (identifier)
+        parameters: (parameters
+          (self_parameter
+            (self)))
+        body: (block)))))
+
+================================================================================
+Attributes with balanced token groups
+================================================================================
+
+struct User {
+    #[serde(rename = "userName")]
+    name: string,
+}
+
+#[derive(Clone, Debug)]
+#[route(get(fn, self::x), [1.5], { a -> b })]
+struct Tag { id: i32 }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_item
+    name: (type_identifier)
+    body: (field_declaration_list
+      (attribute_item
+        (attribute
+          (identifier)
+          arguments: (token_tree
+            (identifier)
+            (string_literal
+              (string_content)))))
+      (field_declaration
+        name: (field_identifier)
+        type: (type_identifier))))
+  (attribute_item
+    (attribute
+      (identifier)
+      arguments: (token_tree
+        (identifier)
+        (identifier))))
+  (attribute_item
+    (attribute
+      (identifier)
+      arguments: (token_tree
+        (identifier)
+        (token_tree
+          (self)
+          (identifier))
+        (token_tree
+          (float_literal))
+        (token_tree
+          (identifier)
+          (identifier)))))
+  (struct_item
+    name: (type_identifier)
+    body: (field_declaration_list
+      (field_declaration
+        name: (field_identifier)
+        type: (type_identifier)))))
+
+================================================================================
+Attribute at the start of the same line
+================================================================================
+
+#[test] fn adds() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (attribute_item
+    (attribute
+      (identifier)))
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))

@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  tags:
+    # The version in the manifest must have its tag. A release whose section
+    # release-please could not read is published but never tagged, and the
+    # next release pull request then proposes a version that has already
+    # shipped; this fails the run on the day that happens.
+    needs: release-please
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The released version has its tag
+        run: |
+          version=$(jq -r '.["."]' .release-please-manifest.json)
+          tag="v$version"
+          if [ "$version" = "0.0.0" ]; then
+            echo "nothing released yet"
+          elif git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+            echo "found $tag"
+          else
+            echo "::error::$tag is missing: release-please did not tag it (see the rule on < and > in commit subjects in CONTRIBUTING.md); create it at the release commit before merging the next release pull request"
+            exit 1
+          fi

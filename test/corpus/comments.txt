@@ -1,0 +1,152 @@
+================================================================================
+Comment on its own line
+================================================================================
+
+// a comment
+fn main() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (line_comment)
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))
+
+================================================================================
+Comment after code
+================================================================================
+
+fn main() {
+    let x = 1; // one
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (integer_literal))
+      (line_comment))))
+
+================================================================================
+Comment between items
+================================================================================
+
+fn a() {}
+// between
+fn b() {}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block))
+  (line_comment)
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block)))
+
+================================================================================
+Comment inside a block
+================================================================================
+
+fn main() {
+    // inside
+    let x = 1;
+    // last
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (line_comment)
+      (let_declaration
+        pattern: (identifier)
+        value: (integer_literal))
+      (line_comment))))
+
+================================================================================
+Comment at end of file without a newline
+================================================================================
+
+fn main() {}
+// the end
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block))
+  (line_comment))
+
+================================================================================
+Comment markers inside strings stay strings
+================================================================================
+
+fn main() {
+    let a = "// x";
+    let b = "a\n// y";
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (let_declaration
+        pattern: (identifier)
+        value: (string_literal
+          (string_content)))
+      (let_declaration
+        pattern: (identifier)
+        value: (string_literal
+          (string_content)
+          (escape_sequence)
+          (string_content))))))
+
+================================================================================
+Comment inside an argument list
+================================================================================
+
+fn main() {
+    f(
+        a, // first
+        "// x",
+        // before the last
+        b,
+    );
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_item
+    name: (identifier)
+    parameters: (parameters)
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (identifier)
+            (line_comment)
+            (string_literal
+              (string_content))
+            (line_comment)
+            (identifier)))))))
