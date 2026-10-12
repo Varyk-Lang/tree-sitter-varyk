@@ -5,12 +5,14 @@
       "camelcase": "Varyk",
       "scope": "source.varyk",
       "path": ".",
-      "file-types": ["vr"],
+      "file-types": [
+        "vr"
+      ],
       "highlights": "queries/highlights.scm"
     }
   ],
   "metadata": {
-    "version": "0.0.0",
+    "version": "0.1.0",
     "license": "MIT OR Apache-2.0",
     "description": "Varyk grammar for Tree-sitter",
     "authors": [
